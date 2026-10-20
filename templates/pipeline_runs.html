@@ -1,379 +1,508 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}DataSentinel | Pipeline Runs{% endblock %}
-
+{% block title %}Pipeline Runs | DataRivQ{% endblock %}
 {% block pipelines_active %}active{% endblock %}
 
 {% block extra_css %}
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="{% static 'css/runs.css' %}">
 {% endblock %}
 
 {% block content %}
 
-<div class="runs-page">
+<div class="mx-auto w-full max-w-[1600px] space-y-7 p-5 sm:p-7 lg:p-8">
 
-    <header class="topbar">
+    <!-- Page header -->
+    <header class="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
 
-        <div class="page-heading">
+        <div>
+            <div class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">
+                <span class="h-2 w-2 rounded-full bg-blue-600"></span>
+                Observability / Executions
+            </div>
 
-            <span class="eyebrow">
-                PIPELINE MONITORING
-            </span>
-
-            <h1>
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900">
                 Pipeline Runs
             </h1>
 
-            <p>
-                Monitor and review historical pipeline executions.
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+                Monitor execution health, data quality, processing activity,
+                and pipeline failures in one place.
             </p>
-
         </div>
 
-        <div class="topbar-actions">
+        <div class="flex flex-wrap items-center gap-3">
 
-            <a
-                href="{% url 'runs_page' %}"
-                class="refresh-btn"
-            >
-                <span class="refresh-icon">↻</span>
-                Refresh
+            <span id="last-refreshed"
+                  class="text-xs text-slate-500">
+                Execution history
+            </span>
+
+            <button type="button"
+                    onclick="window.location.reload()"
+                    class="inline-flex items-center gap-2 rounded-xl border
+                           border-slate-200 bg-white px-4 py-2.5 text-sm
+                           font-semibold text-slate-700 shadow-sm
+                           transition hover:bg-slate-50">
+                ↻ Refresh
+            </button>
+
+            <!-- Replace with the existing pipeline creation URL. -->
+            <a href="/pipelines/create/"
+               class="inline-flex items-center gap-2 rounded-xl
+                      bg-blue-600 px-4 py-2.5 text-sm font-semibold
+                      text-white shadow-sm transition hover:bg-blue-700
+                      focus:outline-none focus:ring-4 focus:ring-blue-100">
+                <span aria-hidden="true">＋</span>
+                Run Pipeline
             </a>
 
         </div>
-
     </header>
 
 
-    <main class="page-content">
+    <!-- KPI summary -->
+    <section aria-label="Execution summary"
+             class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
-        <section class="stats-grid">
+        <!-- Total runs -->
+        <article class="kpi-card relative overflow-hidden rounded-xl
+                        border border-slate-200 bg-white p-5 shadow-sm">
 
-            <article class="stat-card">
+            <div class="absolute right-0 top-0 h-24 w-24
+                        rounded-bl-full bg-blue-50"></div>
 
-                <div class="stat-icon">
-                    ⌁
-                </div>
-
-                <div class="stat-content">
-
-                    <span>
+            <div class="relative flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">
                         Total Runs
-                    </span>
+                    </p>
 
-                    <strong>
-                        {{ runs|length }}
-                    </strong>
+                    <p class="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+                        {{ total_runs|default:0 }}
+                    </p>
 
-                    <small>
-                        All executions
-                    </small>
-
+                    <p class="mt-2 text-xs text-slate-500">
+                        All recorded executions
+                    </p>
                 </div>
 
-            </article>
+                <div class="flex h-11 w-11 items-center justify-center
+                            rounded-xl bg-blue-50 text-blue-600">
+                    <span class="text-xl" aria-hidden="true">▤</span>
+                </div>
+            </div>
+        </article>
 
 
-            <article class="stat-card">
+        <!-- Successful runs -->
+        <article class="kpi-card relative overflow-hidden rounded-xl
+                        border border-slate-200 bg-white p-5 shadow-sm">
 
-                <div class="stat-icon success-icon">
-                    ✓
+            <div class="absolute right-0 top-0 h-24 w-24
+                        rounded-bl-full bg-green-50"></div>
+
+            <div class="relative flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">
+                        Successful Runs
+                    </p>
+
+                    <p class="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+                        {{ successful_runs|default:0 }}
+                    </p>
+
+                    <p class="mt-2 text-xs font-medium text-green-700">
+                        {{ success_rate|default:0 }}% success rate
+                    </p>
                 </div>
 
-                <div class="stat-content">
+                <div class="flex h-11 w-11 items-center justify-center
+                            rounded-xl bg-green-50 text-green-600">
+                    <span class="text-xl" aria-hidden="true">✓</span>
+                </div>
+            </div>
+        </article>
 
-                    <span>
-                        Successful
-                    </span>
 
-                    <strong>
-                        {{ successful_runs }}
-                    </strong>
+        <!-- Failed runs -->
+        <article class="kpi-card relative overflow-hidden rounded-xl
+                        border border-slate-200 bg-white p-5 shadow-sm">
 
-                    <small>
-                        Completed successfully
-                    </small>
+            <div class="absolute right-0 top-0 h-24 w-24
+                        rounded-bl-full bg-red-50"></div>
 
+            <div class="relative flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">
+                        Failed Runs
+                    </p>
+
+                    <p class="mt-3 text-3xl font-bold tracking-tight text-slate-900">
+                        {{ failed_runs|default:0 }}
+                    </p>
+
+                    <p class="mt-2 text-xs font-medium text-red-600">
+                        {{ failure_rate|default:0 }}% failure rate
+                    </p>
                 </div>
 
-            </article>
-
-
-            <article class="stat-card">
-
-                <div class="stat-icon danger-icon">
-                    !
+                <div class="flex h-11 w-11 items-center justify-center
+                            rounded-xl bg-red-50 text-red-600">
+                    <span class="text-xl" aria-hidden="true">!</span>
                 </div>
-
-                <div class="stat-content">
-
-                    <span>
-                        Failed
-                    </span>
-
-                    <strong>
-                        {{ failed_runs }}
-                    </strong>
-
-                    <small>
-                        Requires attention
-                    </small>
-
-                </div>
-
-            </article>
+            </div>
+        </article>
 
 
-            <article class="stat-card">
+        <!-- Average quality -->
+        <article class="kpi-card rounded-xl border border-slate-200
+                        bg-white p-5 shadow-sm">
 
-                <div class="stat-icon score-icon">
-                    ◈
-                </div>
-
-                <div class="stat-content">
-
-                    <span>
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">
                         Average Quality
-                    </span>
+                    </p>
 
-                    <strong>
-
+                    <p class="mt-3 text-3xl font-bold tracking-tight text-slate-900">
                         {% if average_quality != None %}
-                            {{ average_quality|floatformat:2 }}%
+                            {{ average_quality|floatformat:1 }}%
                         {% else %}
                             —
                         {% endif %}
-
-                    </strong>
-
-                    <small>
-                        Across all runs
-                    </small>
-
-                </div>
-
-            </article>
-
-        </section>
-
-
-        <section class="content-card">
-
-            <div class="section-header">
-
-                <div>
-
-                    <span class="section-label">
-                        EXECUTION HISTORY
-                    </span>
-
-                    <h2>
-                        Pipeline Execution History
-                    </h2>
-
-                    <p>
-                        Review every pipeline execution and its quality results.
                     </p>
 
+                    <p class="mt-2 text-xs text-slate-500">
+                        Average recorded quality score
+                    </p>
                 </div>
 
-
-                <div class="run-count">
-
-                    <strong>
-                        {{ runs|length }}
-                    </strong>
-
-                    <span>
-                        runs
-                    </span>
-
+                <div class="flex h-11 w-11 items-center justify-center
+                            rounded-xl bg-violet-50 text-violet-600">
+                    <span class="text-xl" aria-hidden="true">◉</span>
                 </div>
+            </div>
+
+            {% if average_quality != None %}
+                <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                    <div class="h-full rounded-full bg-violet-500"
+                         style="width: {{ average_quality }}%">
+                    </div>
+                </div>
+            {% endif %}
+        </article>
+
+    </section>
+
+
+    <!-- Execution history -->
+    <section class="overflow-hidden rounded-xl border border-slate-200
+                    bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+            <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+
+                <div>
+                    <h2 class="text-lg font-semibold text-slate-900">
+                        Execution History
+                    </h2>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        Investigate pipeline runs, quality scores, and failures.
+                    </p>
+                </div>
+
+                <span class="inline-flex w-fit items-center rounded-full
+                             bg-slate-100 px-3 py-1 text-xs font-semibold
+                             text-slate-600">
+                    {{ runs|length }} records
+                </span>
 
             </div>
 
 
-            {% if runs %}
-
-            <div class="runs-list">
-
-                {% for run in runs %}
-
-                <article class="run-row">
-
-                    <div class="run-id">
-
-                        <span class="run-number">
-                            #{{ run.id }}
-                        </span>
-
-                        <span class="run-label">
-                            PIPELINE RUN
-                        </span>
-
-                    </div>
-
-
-                    <div class="run-main">
-
-                        <div class="run-title">
-
-                            <h3>
-                                {{ run.pipeline.name }}
-                            </h3>
-
-                            <span class="dataset-name">
-                                {{ run.pipeline.dataset.name }}
-                            </span>
-
-                        </div>
-
-
-                        <div class="run-meta">
-
-                            <span>
-                                <i>●</i>
-                                {{ run.rows_processed|default:"0" }} rows
-                            </span>
-
-                            <span>
-                                Started
-                                {{ run.started_at|date:"d M Y, h:i A" }}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="run-quality">
-
-                        <span class="quality-label">
-                            QUALITY
-                        </span>
-
-                        <div class="quality-value">
-
-                            {% if run.quality_score != None %}
-
-                                {{ run.quality_score|floatformat:2 }}%
-
-                            {% else %}
-
-                                —
-
-                            {% endif %}
-
-                        </div>
-
-
-                        {% if run.quality_score != None %}
-
-                        <div class="quality-bar">
-
-                            {% if run.quality_score >= 90 %}
-
-                                <span class="quality-fill quality-excellent"></span>
-
-                            {% elif run.quality_score >= 75 %}
-
-                                <span class="quality-fill quality-good"></span>
-
-                            {% elif run.quality_score >= 50 %}
-
-                                <span class="quality-fill quality-warning"></span>
-
-                            {% else %}
-
-                                <span class="quality-fill quality-critical"></span>
-
-                            {% endif %}
-
-                        </div>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <div class="run-status">
-
-                        {% if run.status == "SUCCESS" %}
-
-                        <span class="status-badge success">
-                            <span class="status-dot"></span>
-                            SUCCESS
-                        </span>
-
-                        {% elif run.status == "FAILED" %}
-
-                        <span class="status-badge failed">
-                            <span class="status-dot"></span>
-                            FAILED
-                        </span>
-
-                        {% else %}
-
-                        <span class="status-badge running">
-                            <span class="status-dot"></span>
-                            {{ run.status }}
-                        </span>
-
-                        {% endif %}
-
-                    </div>
-
-
-                    <div class="run-action">
-
-                        <a
-                            href="{% url 'run_detail' run.id %}"
-                            class="view-btn"
-                        >
-                            View Details
-                            <span>→</span>
-                        </a>
-
-                    </div>
-
-                </article>
-
-                {% endfor %}
-
-            </div>
-
-
-            {% else %}
-
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    ⌁
+            <!-- Filters -->
+            <form method="get"
+                  class="mt-5 flex flex-col gap-3 lg:flex-row lg:items-center">
+
+                <div class="relative min-w-0 flex-1">
+                    <label for="run-search" class="sr-only">
+                        Search runs
+                    </label>
+
+                    <input id="run-search"
+                           name="q"
+                           type="search"
+                           value="{{ request.GET.q|default:'' }}"
+                           placeholder="Search runs..."
+                           class="w-full rounded-lg border border-slate-200
+                                  bg-white px-4 py-2.5 text-sm text-slate-700
+                                  outline-none transition placeholder:text-slate-400
+                                  focus:border-blue-500 focus:ring-4
+                                  focus:ring-blue-50">
                 </div>
 
-                <h3>
-                    No pipeline runs yet
-                </h3>
+                <label class="sr-only" for="run-status">Status</label>
+                <select id="run-status"
+                        name="status"
+                        class="rounded-lg border border-slate-200 bg-white
+                               px-3 py-2.5 text-sm text-slate-700
+                               outline-none focus:border-blue-500">
+                    <option value="">All statuses</option>
+                    <option value="success"
+                        {% if request.GET.status == "success" %}selected{% endif %}>
+                        Success
+                    </option>
+                    <option value="failed"
+                        {% if request.GET.status == "failed" %}selected{% endif %}>
+                        Failed
+                    </option>
+                    <option value="running"
+                        {% if request.GET.status == "running" %}selected{% endif %}>
+                        Running
+                    </option>
+                </select>
 
-                <p>
-                    Run a pipeline to start monitoring your data quality.
-                </p>
+                <label class="sr-only" for="run-date">Started after</label>
+                <input id="run-date"
+                       name="start_date"
+                       type="date"
+                       value="{{ request.GET.start_date|default:'' }}"
+                       class="rounded-lg border border-slate-200 bg-white
+                              px-3 py-2.5 text-sm text-slate-700
+                              outline-none focus:border-blue-500">
 
-                <a
-                    href="{% url 'pipelines_page' %}"
-                    class="primary-btn"
-                >
-                    View Pipelines
+                <button type="submit"
+                        class="rounded-lg bg-blue-600 px-4 py-2.5
+                               text-sm font-semibold text-white
+                               transition hover:bg-blue-700">
+                    Apply
+                </button>
+
+                <a href="{{ request.path }}"
+                   class="rounded-lg border border-slate-200 bg-white
+                          px-4 py-2.5 text-center text-sm font-medium
+                          text-slate-600 transition hover:bg-slate-50">
+                    Reset
                 </a>
 
-            </div>
+            </form>
+        </div>
 
-            {% endif %}
 
-        </section>
+        <!-- Responsive data table -->
+        <div class="overflow-x-auto">
 
-    </main>
+            <table class="w-full min-w-[1150px] border-collapse text-left">
+
+                <thead class="bg-slate-50">
+                    <tr class="border-b border-slate-200">
+
+                        <th class="px-5 py-3.5 text-xs font-semibold uppercase
+                                   tracking-wide text-slate-500">
+                            Run ID
+                        </th>
+
+                        <th class="px-5 py-3.5 text-xs font-semibold uppercase
+                                   tracking-wide text-slate-500">
+                            Pipeline
+                        </th>
+
+                        <th class="px-5 py-3.5 text-xs font-semibold uppercase
+                                   tracking-wide text-slate-500">
+                            Dataset
+                        </th>
+
+                        <th class="px-5 py-3.5 text-xs font-semibold uppercase
+                                   tracking-wide text-slate-500">
+                            Status
+                        </th>
+
+                        <th class="px-5 py-3.5 text-xs font-semibold uppercase
+                                   tracking-wide text-slate-500">
+                            Rows
+                        </th>
+
+                        <th class="px-5 py-3.5 text-xs font-semibold uppercase
+                                   tracking-wide text-slate-500">
+                            Quality
+                        </th>
+
+                        <th class="px-5 py-3.5 text-xs font-semibold uppercase
+                                   tracking-wide text-slate-500">
+                            Started
+                        </th>
+
+                        <th class="px-5 py-3.5 text-xs font-semibold uppercase
+                                   tracking-wide text-slate-500">
+                            Duration
+                        </th>
+
+                        <th class="px-5 py-3.5 text-right text-xs font-semibold
+                                   uppercase tracking-wide text-slate-500">
+                            Actions
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-slate-100">
+
+                    {% for run in runs %}
+                    <tr class="transition hover:bg-slate-50/80">
+
+                        <td class="whitespace-nowrap px-5 py-4">
+                            <span class="font-mono text-sm font-semibold text-blue-600">
+                                #{{ run.id }}
+                            </span>
+                        </td>
+
+                        <td class="px-5 py-4">
+                            <span class="block font-medium text-slate-800">
+                                {{ run.pipeline.name|default:"Pipeline run" }}
+                            </span>
+                        </td>
+
+                        <td class="px-5 py-4">
+                            <span class="block max-w-[180px] truncate text-sm text-slate-600">
+                                {{ run.dataset.name|default:"—" }}
+                            </span>
+                        </td>
+
+                        <td class="whitespace-nowrap px-5 py-4">
+                            {% with status=run.status|lower %}
+                                {% if status == "success" or status == "completed" %}
+                                    <span class="status-badge bg-green-50 text-green-700">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                                        Success
+                                    </span>
+                                {% elif status == "failed" or status == "failure" %}
+                                    <span class="status-badge bg-red-50 text-red-700">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                                        Failed
+                                    </span>
+                                {% elif status == "running" %}
+                                    <span class="status-badge bg-blue-50 text-blue-700">
+                                        <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500"></span>
+                                        Running
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge bg-slate-100 text-slate-600">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+                                        {{ run.status|default:"Pending"|title }}
+                                    </span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+
+                        <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-700">
+                            {{ run.rows_processed|default:0 }}
+                        </td>
+
+                        <td class="whitespace-nowrap px-5 py-4">
+                            {% if run.quality_score != None %}
+                                {% if run.quality_score >= 90 %}
+                                    <span class="quality-badge bg-green-50 text-green-700">
+                                        {{ run.quality_score|floatformat:1 }}%
+                                    </span>
+                                {% elif run.quality_score >= 70 %}
+                                    <span class="quality-badge bg-amber-50 text-amber-700">
+                                        {{ run.quality_score|floatformat:1 }}%
+                                    </span>
+                                {% else %}
+                                    <span class="quality-badge bg-red-50 text-red-700">
+                                        {{ run.quality_score|floatformat:1 }}%
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-sm text-slate-400">—</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500">
+                            {{ run.started_at|date:"d M Y, H:i"|default:"—" }}
+                        </td>
+
+                        <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500">
+                            {{ run.duration|default:"—" }}
+                        </td>
+
+                        <td class="whitespace-nowrap px-5 py-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+
+                                <!-- Replace with your actual detail and log URLs. -->
+                                <a href="#"
+                                   class="text-xs font-semibold text-blue-600 hover:text-blue-800">
+                                    Details
+                                </a>
+
+                                <button type="button"
+                                        class="rounded-md px-2 py-1 text-xs
+                                               font-medium text-slate-600
+                                               hover:bg-slate-100">
+                                    More
+                                </button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="px-6 py-0">
+
+                            <div class="mx-auto flex max-w-lg flex-col
+                                        items-center py-16 text-center">
+
+                                <div class="flex h-20 w-20 items-center
+                                            justify-center rounded-2xl
+                                            border border-blue-100 bg-blue-50">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         stroke-width="1.5"
+                                         class="h-10 w-10 text-blue-600"
+                                         aria-hidden="true">
+                                        <rect x="3" y="4" width="18" height="16"
+                                              rx="3"/>
+                                        <path d="M7 8h10M7 12h4M7 16h6"/>
+                                        <circle cx="17" cy="15" r="2"/>
+                                    </svg>
+                                </div>
+
+                                <h3 class="mt-6 text-xl font-semibold text-slate-900">
+                                    No Pipeline Runs Yet
+                                </h3>
+
+                                <p class="mt-2 text-sm leading-6 text-slate-500">
+                                    Run your first data pipeline to start monitoring
+                                    execution history and quality metrics.
+                                </p>
+
+                                <!-- Replace with your actual pipeline creation URL. -->
+                                <a href="/pipelines/create/"
+                                   class="mt-6 inline-flex items-center gap-2
+                                          rounded-xl bg-blue-600 px-5 py-3
+                                          text-sm font-semibold text-white
+                                          shadow-sm transition hover:bg-blue-700">
+                                    ＋ Run First Pipeline
+                                </a>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+    </section>
 
 </div>
 

@@ -1,24 +1,12 @@
 <div align="center">
 
-# 🛡️ DataSentinel
+# 🛡️ DataRivQ
 
 ### Data Reliability & Quality Monitoring Platform
 
-<p>
-  <strong>
-    A Django-based data reliability platform for ingesting, validating,
-    monitoring, and diagnosing data pipelines.
-  </strong>
-</p>
+**A Django-based data reliability platform for ingesting, validating, monitoring, and diagnosing data pipelines.**
 
-<br>
-
-<a href="https://github.com/chauhan-prachi/DataSentinel">
-  <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github" alt="GitHub Repository">
-</a>
-
-<br><br>
-
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge\&logo=github)](https://github.com/chauhan-prachi/DataRivQ)
 
 </div>
 
@@ -26,7 +14,7 @@
 
 ## 📌 Overview
 
-**DataSentinel** is a data reliability platform built with **Python, Django, PostgreSQL, and Pandas**.
+**DataRivQ** is a data reliability platform built with **Python, Django, PostgreSQL, and Pandas**.
 
 It processes datasets through an end-to-end reliability workflow:
 
@@ -50,28 +38,24 @@ RCA + Alerts
 Observability Dashboard
 ```
 
-The project focuses on detecting data problems early and turning raw failures into **structured, explainable reliability signals**.
-
----
+The project focuses on detecting data problems early and turning failures into structured, explainable reliability signals.
 
 ## ✨ Key Features
 
-| Feature                        | Description                                                                    |
-| ------------------------------ | ------------------------------------------------------------------------------ |
-| 📥 **Multi-Format Ingestion**  | CSV, JSON, Excel, Parquet, TSV, XML, PostgreSQL and remote CSV                 |
-| 🔍 **Dataset Profiling**       | Row counts, data types, nulls, uniqueness and duplicates                       |
-| 🧠 **Schema Detection**        | Identifies identifiers, emails, numerics, dates, booleans and categorical data |
-| ⚙️ **Automatic Rules**         | Suggests quality checks based on detected column characteristics               |
-| ✅ **Data Quality Engine**      | NOT NULL, UNIQUE, EMAIL, DATE, NUMERIC, RANGE and DUPLICATE checks             |
-| 🔄 **Schema Drift**            | Detects added, removed and changed columns/data types                          |
-| 📊 **Anomaly Detection**       | Monitors row count, null rates and numeric mean changes                        |
-| 🚀 **Pipeline Execution**      | Orchestrates ingestion, validation, detection and persistence                  |
-| 📈 **Reliability Scoring**     | Combines quality, schema, anomaly and pipeline signals                         |
-| 🔎 **Automated RCA**           | Generates structured findings, evidence, impact and recommendations            |
-| 🚨 **Alerts**                  | Detects quality failures, anomalies, schema drift and pipeline failures        |
-| 📊 **Observability Dashboard** | Tracks reliability, quality trends, incidents and pipeline history             |
-
----
+| Feature                        | Description                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------- |
+| 📥 **Multi-Format Ingestion**  | CSV, JSON, Excel, Parquet, TSV, XML, PostgreSQL, and remote CSV                 |
+| 🔍 **Dataset Profiling**       | Row counts, data types, nulls, uniqueness, and duplicates                       |
+| 🧠 **Schema Detection**        | Identifies identifiers, emails, numerics, dates, booleans, and categorical data |
+| ⚙️ **Automatic Rules**         | Suggests quality checks based on detected column characteristics                |
+| ✅ **Data Quality Engine**      | NOT NULL, UNIQUE, EMAIL, DATE, NUMERIC, RANGE, and DUPLICATE checks             |
+| 🔄 **Schema Drift**            | Detects added, removed, and changed columns or data types                       |
+| 📊 **Anomaly Detection**       | Monitors row counts, null rates, and numeric mean changes                       |
+| 🚀 **Pipeline Execution**      | Coordinates ingestion, validation, detection, and persistence                   |
+| 📈 **Reliability Scoring**     | Combines quality, schema, anomaly, and pipeline signals                         |
+| 🔎 **Automated RCA**           | Produces structured findings, evidence, impact, and recommendations             |
+| 🚨 **Alerts**                  | Detects quality failures, anomalies, schema drift, and pipeline failures        |
+| 📊 **Observability Dashboard** | Tracks reliability, quality trends, incidents, and pipeline history             |
 
 ## 🧪 Data Quality Engine
 
@@ -98,11 +82,9 @@ Check
 └── Diagnostic Details
 ```
 
----
-
 ## 📊 Reliability Engine
 
-DataSentinel calculates pipeline reliability using multiple signals:
+DataRivQ calculates pipeline reliability using multiple signals:
 
 ```text
 Quality Score      → 50%
@@ -113,21 +95,19 @@ Pipeline Status    → 10%
 
 The resulting score is converted into a reliability grade:
 
-```text
-A → 90+
-B → 80–89
-C → 70–79
-D → 60–69
-F → <60
-```
+| Grade |        Score |
+| ----- | -----------: |
+| A     | 90 and above |
+| B     |        80–89 |
+| C     |        70–79 |
+| D     |        60–69 |
+| F     |     Below 60 |
 
-The scoring model is intentionally **transparent and deterministic** in v1.
-
----
+The scoring model is designed to be transparent and deterministic in v1.
 
 ## 🔎 Automated Root Cause Analysis
 
-When reliability problems occur, DataSentinel analyzes signals from:
+When reliability problems occur, DataRivQ analyzes signals from:
 
 * Quality failures
 * Schema drift
@@ -144,70 +124,62 @@ Impact
 Recommendation
 ```
 
-The current RCA engine is **rule-based**, providing a foundation for future ML/LLM-assisted investigation.
-
----
+The current RCA engine is rule-based, providing a foundation for future ML/LLM-assisted investigation.
 
 ## 🏗️ Architecture
 
 ```text
-                         DataSentinel
-                              │
-              ┌───────────────┼───────────────┐
-              │               │               │
-              ▼               ▼               ▼
-          Ingestion       Profiling       PostgreSQL
-              │               │
-              └───────┬───────┘
-                      ▼
-              Quality Engine
-                      │
-          ┌───────────┼───────────┐
-          ▼           ▼           ▼
-       Quality     Schema      Anomaly
-       Checks      Drift      Detection
-          │           │           │
-          └───────────┼───────────┘
-                      ▼
-                 Pipeline Run
-                      │
-              ┌───────┼───────┐
-              ▼       ▼       ▼
-           Score     RCA    Alerts
+                         DataRivQ
+                            │
+              ┌─────────────┼─────────────┐
+              │             │             │
+              ▼             ▼             ▼
+          Ingestion      Profiling    PostgreSQL
+              │             │
+              └──────┬──────┘
+                     ▼
+                Quality Engine
+                     │
+          ┌──────────┼──────────┐
+          ▼          ▼          ▼
+       Quality     Schema     Anomaly
+       Checks      Drift     Detection
+          │          │          │
+          └──────────┼──────────┘
+                     ▼
+                Pipeline Run
+                     │
+              ┌──────┼──────┐
+              ▼      ▼      ▼
+            Score   RCA   Alerts
               │
               ▼
-         Dashboard
+          Dashboard
 ```
-
----
 
 ## 🛠️ Technology Stack
 
-| Category            | Technologies                    |
-| ------------------- | ------------------------------- |
-| **Backend**         | Python, Django                  |
-| **Database**        | PostgreSQL, psycopg             |
-| **Data Processing** | Pandas, NumPy, PyArrow          |
-| **File Processing** | OpenPyXL, lxml                  |
-| **Frontend**        | HTML, CSS, JavaScript, Chart.js |
-| **Server**          | Gunicorn                        |
-| **Static Files**    | WhiteNoise                      |
-| **Development**     | Git, GitHub, VS Code            |
-
----
+| Category               | Technologies                    |
+| ---------------------- | ------------------------------- |
+| **Backend**            | Python, Django                  |
+| **Database**           | PostgreSQL, psycopg             |
+| **Data Processing**    | Pandas, NumPy, PyArrow          |
+| **File Processing**    | OpenPyXL, lxml                  |
+| **Frontend**           | HTML, CSS, JavaScript, Chart.js |
+| **Application Server** | Gunicorn                        |
+| **Static Files**       | WhiteNoise                      |
+| **Development**        | Git, GitHub, VS Code            |
 
 ## 📁 Project Structure
 
 ```text
-DataSentinel/
+DataRivQ/
 │
 ├── accounts/
 ├── config/
-│
 ├── core/
 │   ├── models.py
 │   ├── views.py
-│   │
 │   └── services/
 │       ├── pipeline.py
 │       ├── ingestion/
@@ -226,33 +198,46 @@ DataSentinel/
 └── README.md
 ```
 
----
-
 ## ⚙️ Run Locally
 
+Clone the repository:
+
 ```powershell
-git clone https://github.com/chauhan-prachi/DataSentinel.git
-cd DataSentinel
+git clone https://github.com/chauhan-prachi/DataRivQ.git
+cd DataRivQ
+```
 
+Create and activate a virtual environment:
+
+```powershell
 python -m venv venv
-venv\Scripts\Activate.ps1
+.\venv\Scripts\Activate.ps1
+```
 
-pip install -r requirements.txt
+Install dependencies:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Configure your environment variables, including the appropriate PostgreSQL connection settings and Django secret key.
+
+Apply migrations and start the development server:
+
+```powershell
 python manage.py migrate
-python manage.py runserver --noreload
+python manage.py runserver
 ```
 
-Open:
+Open the application at:
 
-```text
 http://127.0.0.1:8000/
-```
 
-Configure database and secret settings through environment variables. Never commit `.env` or credentials.
-
----
+**Security:** Never commit `.env` files, database credentials, API keys, or OAuth secrets.
 
 ## ✅ Verification
+
+Run the following checks:
 
 ```powershell
 python manage.py check
@@ -260,49 +245,28 @@ python manage.py makemigrations --check
 python manage.py test
 ```
 
-Current project verification:
-
-```text
-Django System Check       ✓
-Migration Check           ✓
-Project Verification      ✓
-```
-
----
+Use the results from your current environment to document the project's actual verification status.
 
 ## 🚀 Roadmap
 
 * [ ] Historical anomaly baselines
 * [ ] Semantic data drift detection
-* [ ] Advanced statistical/ML anomaly detection
+* [ ] Advanced statistical and ML-based anomaly detection
 * [ ] Incident correlation
 * [ ] Data lineage
 * [ ] Airflow orchestration
 * [ ] PySpark large-scale processing
 * [ ] Cloud data sources
-* [ ] ML/LLM-assisted RCA
+* [ ] ML/LLM-assisted root cause analysis
 * [ ] Production-grade alert routing
-
----
 
 ## 👩‍💻 About
 
 **Prachi Chauhan**
 
-MCA | Python | SQL | Data Engineering | Backend | Data Reliability
+MCA | Python | SQL | Data Engineering | Backend Development | Data Reliability
 
-DataSentinel is being developed as a practical exploration of **data engineering, data quality, pipeline observability, and reliable data systems**.
+DataRivQ is a practical exploration of data engineering, data quality, pipeline observability, and reliable data systems.
 
-<br>
-
-<a href="https://github.com/chauhan-prachi">
-  <img src="https://img.shields.io/badge/GitHub-Profile-181717?style=for-the-badge&logo=github" alt="GitHub">
-</a>
-
- 
-
-<a href="https://www.linkedin.com/in/prachi-chauhan-79a446226">
-  <img src="https://img.shields.io/badge/LinkedIn-Profile-0A66C2?style=for-the-badge&logo=linkedin" alt="LinkedIn">
-</a>
-
-</div>
+[![GitHub Profile](https://img.shields.io/badge/GitHub-Profile-181717?style=for-the-badge\&logo=github)](https://github.com/chauhan-prachi)
+[![LinkedIn Profile](https://img.shields.io/badge/LinkedIn-Profile-0A66C2?style=for-the-badge\&logo=linkedin)](https://www.linkedin.com/in/prachi-chauhan-79a446226)

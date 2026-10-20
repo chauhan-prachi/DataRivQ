@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}DataSentinel | {{ pipeline.name }}{% endblock %}
+{% block title %}DataRivQ | {{ pipeline.name }}{% endblock %}
 
 {% block pipelines_active %}active{% endblock %}
 
@@ -14,33 +14,23 @@
 
 <div class="pipeline-page">
 
-
 <header class="pipeline-header">
 
     <div class="pipeline-header-main">
 
-        <a
-            href="{% url 'pipelines_page' %}"
-            class="back-link"
-        >
+        <a href="{% url 'pipelines_page' %}" class="back-link">
             ← Pipelines
         </a>
 
         <div class="pipeline-title-row">
 
-            <div class="pipeline-title-icon">
-                ◈
-            </div>
+            <div class="pipeline-title-icon">◈</div>
 
             <div class="pipeline-title-content">
 
-                <div class="pipeline-label">
-                    PIPELINE
-                </div>
+                <div class="pipeline-label">PIPELINE</div>
 
-                <h1>
-                    {{ pipeline.name }}
-                </h1>
+                <h1>{{ pipeline.name }}</h1>
 
                 <p>
                     {{ pipeline.description|default:"Monitor dataset quality and pipeline health." }}
@@ -55,19 +45,15 @@
     <div class="pipeline-header-actions">
 
         {% if pipeline.status == "ACTIVE" %}
-
             <span class="status-badge status-active">
                 <span class="status-dot"></span>
                 ACTIVE
             </span>
-
         {% else %}
-
             <span class="status-badge status-inactive">
                 <span class="status-dot"></span>
                 {{ pipeline.status }}
             </span>
-
         {% endif %}
 
         <a
@@ -83,37 +69,25 @@
         >
             {% csrf_token %}
 
-            <button
-                type="submit"
-                class="run-btn"
-            >
+            <button type="submit" class="run-btn">
                 <span class="run-icon">▶</span>
                 Run Pipeline
             </button>
-
         </form>
 
     </div>
 
 </header>
 
-
 {% if messages %}
-
     <div class="messages">
-
         {% for message in messages %}
-
             <div class="message message-{{ message.tags }}">
                 {{ message }}
             </div>
-
         {% endfor %}
-
     </div>
-
 {% endif %}
-
 
 <main class="pipeline-content">
 
@@ -121,23 +95,15 @@
 
         <div class="overview-card">
 
-            <div class="overview-icon dataset">
-                ▦
-            </div>
+            <div class="overview-icon dataset">▦</div>
 
             <div class="overview-content">
 
-                <span class="overview-label">
-                    DATASET
-                </span>
+                <span class="overview-label">DATASET</span>
 
-                <strong>
-                    {{ pipeline.dataset.name }}
-                </strong>
+                <strong>{{ pipeline.dataset.name }}</strong>
 
-                <small>
-                    Connected data source
-                </small>
+                <small>Connected data source</small>
 
                 <a
                     href="{% url 'dataset_detail_page' pipeline.dataset.id %}"
@@ -150,93 +116,66 @@
 
         </div>
 
-
         <div class="overview-card">
 
-            <div class="overview-icon runs">
-                ⌁
-            </div>
+            <div class="overview-icon runs">⌁</div>
 
             <div class="overview-content">
 
-                <span class="overview-label">
-                    TOTAL RUNS
-                </span>
+                <span class="overview-label">TOTAL RUNS</span>
 
-                <strong>
-                    {{ total_runs }}
-                </strong>
+                <strong>{{ total_runs }}</strong>
 
-                <small>
-                    Pipeline executions
-                </small>
+                <small>Pipeline executions</small>
 
             </div>
 
         </div>
 
-
         <div class="overview-card">
 
-            <div class="overview-icon quality">
-                ◈
-            </div>
+            <div class="overview-icon quality">◈</div>
 
             <div class="overview-content">
 
-                <span class="overview-label">
-                    AVERAGE QUALITY
-                </span>
+                <span class="overview-label">AVERAGE QUALITY</span>
 
                 <strong>
-
                     {% if average_quality != None %}
                         {{ average_quality|floatformat:2 }}%
                     {% else %}
                         --
                     {% endif %}
-
                 </strong>
 
-                <small>
-                    Across all executions
-                </small>
+                <small>Across all executions</small>
 
             </div>
 
         </div>
 
-
         <div class="overview-card">
 
-            <div class="overview-icon latest">
-                ✓
-            </div>
+            <div class="overview-icon latest">✓</div>
 
             <div class="overview-content">
 
-                <span class="overview-label">
-                    LATEST RUN
-                </span>
+                <span class="overview-label">LATEST RUN</span>
 
                 <strong>
-
                     {% if latest_run %}
                         #{{ latest_run.id }}
                     {% else %}
                         --
                     {% endif %}
-
                 </strong>
 
                 <small>
-
                     {% if latest_run %}
                         {{ latest_run.started_at|date:"d M Y, h:i A" }}
                     {% else %}
                         No executions yet
                     {% endif %}
-
                 </small>
 
             </div>
@@ -245,116 +184,70 @@
 
     </section>
 
-
     <section class="health-section">
 
         <div class="section-heading">
 
             <div>
+                <span class="section-eyebrow">CURRENT HEALTH</span>
 
-                <span class="section-eyebrow">
-                    CURRENT HEALTH
-                </span>
-
-                <h2>
-                    Pipeline Health
-                </h2>
+                <h2>Pipeline Health</h2>
 
                 <p>
                     Latest quality assessment for this pipeline.
                 </p>
-
             </div>
 
         </div>
-
 
         <div class="health-card">
 
             <div class="health-score">
 
-                <div class="score-ring
-                    {% if latest_run and latest_run.quality_score != None %}
-
-                        {% if latest_run.quality_score >= 80 %}
-                            score-good
-                        {% elif latest_run.quality_score >= 60 %}
-                            score-warning
-                        {% else %}
-                            score-danger
-                        {% endif %}
-
-                    {% else %}
-                        score-empty
-                    {% endif %}
-                ">
+                <div class="score-ring {% if latest_run and latest_run.quality_score != None %}{% if latest_run.quality_score >= 80 %}score-good{% elif latest_run.quality_score >= 60 %}score-warning{% else %}score-danger{% endif %}{% else %}score-empty{% endif %}">
 
                     <div class="score-ring-inner">
 
                         <strong>
-
                             {% if latest_run and latest_run.quality_score != None %}
                                 {{ latest_run.quality_score|floatformat:0 }}%
                             {% else %}
                                 --
                             {% endif %}
-
                         </strong>
 
-                        <span>
-                            QUALITY
-                        </span>
+                        <span>QUALITY</span>
 
                     </div>
 
                 </div>
 
-
                 <div class="score-info">
 
-                    <span class="score-label">
-                        Latest quality score
-                    </span>
+                    <span class="score-label">Latest quality score</span>
 
                     {% if latest_run and latest_run.quality_score != None %}
 
                         {% if latest_run.quality_score >= 80 %}
-
-                            <h3>
-                                Healthy pipeline
-                            </h3>
-
+                            <h3>Healthy pipeline</h3>
                             <p>
                                 Data quality is within a healthy range.
                             </p>
-
                         {% elif latest_run.quality_score >= 60 %}
-
-                            <h3>
-                                Needs attention
-                            </h3>
-
+                            <h3>Needs attention</h3>
                             <p>
                                 Some quality checks require review.
                             </p>
-
                         {% else %}
-
-                            <h3>
-                                Quality issues detected
-                            </h3>
-
+                            <h3>Quality issues detected</h3>
                             <p>
                                 Failed quality checks require attention.
                             </p>
-
                         {% endif %}
 
                     {% else %}
 
-                        <h3>
-                            No execution yet
-                        </h3>
+                        <h3>No execution yet</h3>
 
                         <p>
                             Run the pipeline to generate a quality assessment.
@@ -366,68 +259,37 @@
 
             </div>
 
-
             <div class="health-divider"></div>
 
-
             <div class="health-stat">
 
-                <span class="health-stat-icon passed">
-                    ✓
-                </span>
+                <span class="health-stat-icon passed">✓</span>
 
                 <div>
-
-                    <span>
-                        Passed checks
-                    </span>
-
-                    <strong>
-                        {{ passed_checks }}
-                    </strong>
-
+                    <span>Passed checks</span>
+                    <strong>{{ passed_checks }}</strong>
                 </div>
 
             </div>
 
-
             <div class="health-stat">
 
-                <span class="health-stat-icon failed">
-                    !
-                </span>
+                <span class="health-stat-icon failed">!</span>
 
                 <div>
-
-                    <span>
-                        Failed checks
-                    </span>
-
-                    <strong>
-                        {{ failed_checks }}
-                    </strong>
-
+                    <span>Failed checks</span>
+                    <strong>{{ failed_checks }}</strong>
                 </div>
 
             </div>
 
-
             <div class="health-stat">
 
-                <span class="health-stat-icon total">
-                    ◈
-                </span>
+                <span class="health-stat-icon total">◈</span>
 
                 <div>
-
-                    <span>
-                        Configured checks
-                    </span>
-
-                    <strong>
-                        {{ quality_checks|length }}
-                    </strong>
-
+                    <span>Configured checks</span>
+                    <strong>{{ quality_checks|length }}</strong>
                 </div>
 
             </div>
@@ -436,27 +298,19 @@
 
     </section>
 
-
     <section class="checks-section">
 
         <div class="section-heading">
 
             <div>
+                <span class="section-eyebrow">QUALITY</span>
 
-                <span class="section-eyebrow">
-                    QUALITY
-                </span>
-
-                <h2>
-                    Quality Checks
-                </h2>
+                <h2>Quality Checks</h2>
 
                 <p>
                     Latest results from the configured quality rules.
                 </p>
-
             </div>
-
 
             <span class="section-count">
                 {{ quality_checks|length }} checks
@@ -464,33 +318,23 @@
 
         </div>
 
-
         <div class="checks-list">
 
             {% if latest_results %}
 
                 {% for result in latest_results %}
 
-                    <article class="check-card
-                        {% if result.passed %}
-                            check-success
-                        {% else %}
-                            check-failure
-                        {% endif %}
-                    ">
+                    <article class="check-card {% if result.passed %}check-success{% else %}check-failure{% endif %}">
 
                         <div class="check-main">
 
                             <div class="check-icon">
-
                                 {% if result.passed %}
                                     ✓
                                 {% else %}
                                     !
                                 {% endif %}
-
                             </div>
-
 
                             <div class="check-info">
 
@@ -501,42 +345,29 @@
                                     </h3>
 
                                     {% if result.passed %}
-
                                         <span class="check-status success">
                                             PASSED
                                         </span>
-
                                     {% else %}
-
                                         <span class="check-status failure">
                                             FAILED
                                         </span>
-
                                     {% endif %}
 
                                 </div>
 
-
                                 <p>
-
                                     {{ result.quality_check.check_type }}
 
                                     {% if result.quality_check.column_name %}
-
-                                        <span class="separator">
-                                            ·
-                                        </span>
-
+                                        <span class="separator">·</span>
                                         {{ result.quality_check.column_name }}
-
                                     {% endif %}
-
                                 </p>
 
                             </div>
 
                         </div>
-
 
                         <div class="check-result">
 
@@ -546,80 +377,43 @@
                                     {{ result.pass_rate|floatformat:2 }}%
                                 </strong>
 
-                                <span>
-                                    pass rate
-                                </span>
+                                <span>pass rate</span>
 
                             </div>
-
 
                             <div class="progress-track">
 
                                 {% if result.pass_rate >= 90 %}
-
                                     <div class="progress-fill progress-90"></div>
-
                                 {% elif result.pass_rate >= 75 %}
-
                                     <div class="progress-fill progress-75"></div>
-
                                 {% elif result.pass_rate >= 50 %}
-
                                     <div class="progress-fill progress-50"></div>
-
                                 {% elif result.pass_rate > 0 %}
-
                                     <div class="progress-fill progress-25"></div>
-
                                 {% else %}
-
                                     <div class="progress-fill progress-0"></div>
-
                                 {% endif %}
 
                             </div>
 
                         </div>
 
-
                         <div class="check-meta">
 
                             <div>
-
-                                <span>
-                                    Rows checked
-                                </span>
-
-                                <strong>
-                                    {{ result.rows_checked }}
-                                </strong>
-
+                                <span>Rows checked</span>
+                                <strong>{{ result.rows_checked }}</strong>
                             </div>
 
-
                             <div>
-
-                                <span>
-                                    Passed
-                                </span>
-
-                                <strong>
-                                    {{ result.rows_passed }}
-                                </strong>
-
+                                <span>Passed</span>
+                                <strong>{{ result.rows_passed }}</strong>
                             </div>
 
-
                             <div>
-
-                                <span>
-                                    Failed
-                                </span>
-
-                                <strong>
-                                    {{ result.rows_failed }}
-                                </strong>
-
+                                <span>Failed</span>
+                                <strong>{{ result.rows_failed }}</strong>
                             </div>
 
                         </div>
@@ -632,20 +426,14 @@
 
                 <div class="empty-checks">
 
-                    <div class="empty-check-icon">
-                        ◈
-                    </div>
+                    <div class="empty-check-icon">◈</div>
 
                     <div>
-
-                        <h3>
-                            No quality results yet
-                        </h3>
+                        <h3>No quality results yet</h3>
 
                         <p>
                             Run the pipeline to evaluate the configured quality checks.
                         </p>
-
                     </div>
 
                 </div>
@@ -656,37 +444,25 @@
 
     </section>
 
-
     <section class="latest-run-section">
 
         <div class="section-heading">
 
             <div>
+                <span class="section-eyebrow">EXECUTION</span>
 
-                <span class="section-eyebrow">
-                    EXECUTION
-                </span>
-
-                <h2>
-                    Latest Run
-                </h2>
+                <h2>Latest Run</h2>
 
                 <p>
                     Most recent pipeline execution.
                 </p>
-
             </div>
 
-
-            <a
-                href="{% url 'runs_page' %}"
-                class="view-all-link"
-            >
+            <a href="{% url 'runs_page' %}" class="view-all-link">
                 View All Runs →
             </a>
 
         </div>
-
 
         {% if latest_run %}
 
@@ -695,67 +471,37 @@
                 <div class="latest-run-main">
 
                     <div class="run-number">
-
-                        <span>
-                            RUN
-                        </span>
-
-                        <strong>
-                            #{{ latest_run.id }}
-                        </strong>
-
+                        <span>RUN</span>
+                        <strong>#{{ latest_run.id }}</strong>
                     </div>
-
 
                     <div class="run-status-wrapper">
-
                         <span class="run-status run-{{ latest_run.status|lower }}">
-
                             <span></span>
-
                             {{ latest_run.status }}
-
                         </span>
-
                     </div>
 
                 </div>
 
-
                 <div class="latest-run-stat">
-
-                    <span>
-                        ROWS
-                    </span>
-
-                    <strong>
-                        {{ latest_run.rows_processed|default:0 }}
-                    </strong>
-
+                    <span>ROWS</span>
+                    <strong>{{ latest_run.rows_processed|default:0 }}</strong>
                 </div>
 
-
                 <div class="latest-run-stat">
-
-                    <span>
-                        QUALITY
-                    </span>
+                    <span>QUALITY</span>
 
                     <strong>
-
                         {% if latest_run.quality_score != None %}
                             {{ latest_run.quality_score|floatformat:2 }}%
                         {% else %}
                             --
                         {% endif %}
-
                     </strong>
-
                 </div>
 
-
                 <div class="latest-run-date">
-
                     <span>
                         {{ latest_run.started_at|date:"d M Y" }}
                     </span>
@@ -763,9 +509,7 @@
                     <strong>
                         {{ latest_run.started_at|date:"h:i A" }}
                     </strong>
-
                 </div>
-
 
                 <a
                     href="{% url 'run_detail' latest_run.id %}"
@@ -780,37 +524,25 @@
 
             <div class="no-run-card">
 
-                <div class="no-run-icon">
-                    ⌁
-                </div>
+                <div class="no-run-icon">⌁</div>
 
                 <div>
-
-                    <h3>
-                        No pipeline runs yet
-                    </h3>
+                    <h3>No pipeline runs yet</h3>
 
                     <p>
                         Execute the pipeline to see quality results here.
                     </p>
-
                 </div>
-
 
                 <form
                     method="post"
                     action="{% url 'run_quality_checks' pipeline.id %}"
                 >
-
                     {% csrf_token %}
 
-                    <button
-                        type="submit"
-                        class="run-btn"
-                    >
+                    <button type="submit" class="run-btn">
                         ▶ Run Pipeline
                     </button>
-
                 </form>
 
             </div>

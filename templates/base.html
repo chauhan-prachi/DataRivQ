@@ -1,272 +1,148 @@
 {% load static %}
 
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="csrf-token" content="{{ csrf_token }}">
-
-    <title>{% block title %}DataSentinel{% endblock %}</title>
-
+    <title>{% block title %}DataRivQ{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-
     {% block extra_css %}{% endblock %}
-
 </head>
-
 <body>
-
     <div class="app">
-
         <aside class="sidebar">
-
             <div class="brand">
-
-            <div class="brand-icon">◈</div>
+                <div class="brand-icon">◈</div>
                 <div class="brand-text">
-
-                    <h2>DataSentinel</h2>
-
+                    <h2>DataRivQ</h2>
                     <span>DATA RELIABILITY</span>
-
                 </div>
-
             </div>
 
-
             <nav class="navigation">
-
-                <a
-                    href="/dashboard/"
-                    class="nav-item {% block dashboard_active %}{% endblock %}"
-                >
+                <a href="/dashboard/" class="nav-item {% block dashboard_active %}{% endblock %}">
                     <span class="nav-icon">⌂</span>
                     <span>Dashboard</span>
                 </a>
 
-
-                <a
-                    href="/datasets/"
-                    class="nav-item {% block datasets_active %}{% endblock %}"
-                >
+                <a href="/datasets/" class="nav-item {% block datasets_active %}{% endblock %}">
                     <span class="nav-icon">▣</span>
                     <span>Datasets</span>
                 </a>
 
-
-                <a
-                    href="/pipelines/"
-                    class="nav-item {% block pipelines_active %}{% endblock %}"
-                >
+                <a href="/pipelines/" class="nav-item {% block pipelines_active %}{% endblock %}">
                     <span class="nav-icon">◈</span>
                     <span>Pipelines</span>
                 </a>
 
-
-                <a
-                    href="/runs/"
-                    class="nav-item {% block runs_active %}{% endblock %}"
-                >
+                <a href="/runs/" class="nav-item {% block runs_active %}{% endblock %}">
                     <span class="nav-icon">↻</span>
                     <span>Runs</span>
                 </a>
 
-
-                <a
-                    href="/issues/"
-                    class="nav-item {% block issues_active %}{% endblock %}"
-                >
+                <a href="/issues/" class="nav-item {% block issues_active %}{% endblock %}">
                     <span class="nav-icon">⚠</span>
                     <span>Issues</span>
                 </a>
 
-
-                <a
-                    href="/alerts/"
-                    class="nav-item {% block alerts_active %}{% endblock %}"
-                >
+                <a href="/alerts/" class="nav-item {% block alerts_active %}{% endblock %}">
                     <span class="nav-icon">♢</span>
                     <span>Alerts</span>
                 </a>
 
-
-                <a
-                    href="{% if request.user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}"
-                    class="nav-item {% block profile_active %}{% endblock %}"
-                >
-
+                <a href="{% if request.user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}" class="nav-item {% block profile_active %}{% endblock %}">
                     <span class="nav-icon profile-avatar {% if not request.user.is_authenticated %}guest-avatar{% endif %}">
-
                         {% if request.user.is_authenticated %}
-
                             {% if request.user.first_name %}
-
                                 {{ request.user.first_name|slice:":1"|upper }}
-
                             {% else %}
-
                                 {{ request.user.username|slice:":1"|upper }}
-
                             {% endif %}
-
                         {% else %}
-
                             👤
-
                         {% endif %}
-
                     </span>
-
                     <span>Profile</span>
-
                 </a>
-
             </nav>
 
-
             <div class="sidebar-bottom">
-
                 <div class="system-status">
-
                     <span class="status-dot"></span>
-
                     <div>
-
                         <strong>System Operational</strong>
-
                         <small>API connected</small>
-
                     </div>
-
                 </div>
-
             </div>
-
         </aside>
 
-
         <main class="main-content">
-
             {% block content %}{% endblock %}
-
         </main>
-
     </div>
 
-
     {% if messages %}
-
         <div class="toast-container" id="toastContainer">
-
             {% for message in messages %}
-
                 <div class="toast-message {{ message.tags }}" role="alert">
-
                     <div class="toast-icon">
-
                         {% if message.tags == "success" %}
-
                             ✓
-
                         {% elif message.tags == "error" %}
-
                             !
-
                         {% elif message.tags == "warning" %}
-
                             !
-
                         {% else %}
-
                             i
-
                         {% endif %}
-
                     </div>
-
 
                     <div class="toast-text">
-
                         {{ message }}
-
                     </div>
 
-
-                    <button
-                        type="button"
-                        class="toast-close"
-                        aria-label="Close notification"
-                    >
+                    <button type="button" class="toast-close" aria-label="Close notification">
                         ×
                     </button>
-
                 </div>
-
             {% endfor %}
-
         </div>
-
     {% endif %}
 
-
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toastMessages = document.querySelectorAll(".toast-message");
 
-        document.addEventListener("DOMContentLoaded", function() {
-
-            const toastMessages =
-                document.querySelectorAll(".toast-message");
-
-
-            toastMessages.forEach(function(toast) {
-
-                const closeButton =
-                    toast.querySelector(".toast-close");
-
+            toastMessages.forEach(function (toast) {
+                const closeButton = toast.querySelector(".toast-close");
+                let removed = false;
 
                 function removeToast() {
+                    if (removed) {
+                        return;
+                    }
 
+                    removed = true;
                     toast.classList.add("toast-hiding");
 
-
-                    setTimeout(function() {
-
+                    setTimeout(function () {
                         toast.remove();
-
                     }, 300);
-
                 }
-
 
                 if (closeButton) {
-
-                    closeButton.addEventListener(
-                        "click",
-                        removeToast
-                    );
-
+                    closeButton.addEventListener("click", removeToast);
                 }
 
-
-                setTimeout(
-                    removeToast,
-                    4000
-                );
-
+                setTimeout(removeToast, 4000);
             });
-
         });
-
     </script>
 
-
     {% block extra_js %}{% endblock %}
-
 </body>
-
 </html>
+
